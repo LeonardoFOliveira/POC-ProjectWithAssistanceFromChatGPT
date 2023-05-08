@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginRequest).subscribe(
       (token: string) => {
         this.authService.setToken(token);
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       },
       (error) => {
         this.errorMessage = error.error.errorMessage;

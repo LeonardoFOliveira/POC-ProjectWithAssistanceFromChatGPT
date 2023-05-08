@@ -1,5 +1,6 @@
 ﻿using EmployeePayrollAccess.Application.DTOs;
 using EmployeePayrollAccess.Application.Interfaces;
+using EmployeePayrollAccess.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeePayrollAccess.API.Controllers
@@ -9,10 +10,12 @@ namespace EmployeePayrollAccess.API.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly ILoginService _loginService;
+        private readonly IRegistrationService _registrationService;
 
-        public EmployeeController(ILoginService loginService)
+        public EmployeeController(ILoginService loginService, IRegistrationService registrationService)
         {
             _loginService = loginService;
+            _registrationService = registrationService;
         }
 
         [HttpPost("login")]
@@ -24,6 +27,19 @@ namespace EmployeePayrollAccess.API.Controllers
                 return Ok(new { token = result.Data });
 
             return BadRequest(result);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
+        {
+            var result = await _registrationService.RegisterAsync(registerRequestDto);
+
+            if (result.Success)
+            {
+                return Ok();
+            }
+
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace EmployeePayrollAccess.Application.IoC
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
 
             return services;
         }

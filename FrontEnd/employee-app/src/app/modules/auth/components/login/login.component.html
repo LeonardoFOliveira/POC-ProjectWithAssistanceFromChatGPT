@@ -1,15 +1,15 @@
-<div class="login-container">
-    <h1>Login</h1>
-    <form (submit)="onSubmit()">
-      <div class="input-group">
-        <input type="text" placeholder="CPF" [(ngModel)]="loginRequest.Cpf" name="cpf" required />
-      </div>
-      <div class="input-group">
-        <input type="password" placeholder="Password" [(ngModel)]="loginRequest.Password" name="password" required />
-      </div>
-      <button type="submit">Login</button>
-      <div *ngIf="errorMessage" class="error-message">
-        {{errorMessage}}
-      </div>
-    </form>
+<form (ngSubmit)="onSubmit()">
+  <h2>Login</h2>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
   </div>
+
+  <label for="cpf">CPF</label>
+  <input type="text" id="cpf" placeholder="CPF" [(ngModel)]="loginRequest.Cpf" name="cpf" required />
+
+  <label for="password">Password</label>
+  <input type="password" id="password" placeholder="Password" [(ngModel)]="loginRequest.Password" name="password" required />
+
+  <button type="submit">Login</button>
+</form>

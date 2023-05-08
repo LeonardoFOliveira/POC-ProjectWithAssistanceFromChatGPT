@@ -12,11 +12,13 @@ namespace EmployeePayrollAccess.Tests.PresentationTests
     {
         private readonly EmployeeController _employeeController;
         private readonly Mock<ILoginService> _loginServiceMock;
+        private readonly Mock<IRegistrationService> _mockRegistrationService;
 
         public EmployeeControllerTests()
         {
             _loginServiceMock = new Mock<ILoginService>();
-            _employeeController = new EmployeeController(_loginServiceMock.Object);
+            _mockRegistrationService = new Mock<IRegistrationService>();
+            _employeeController = new EmployeeController(_loginServiceMock.Object, _mockRegistrationService.Object);
         }
 
         [Fact]
@@ -87,6 +89,48 @@ namespace EmployeePayrollAccess.Tests.PresentationTests
             var responseServiceResult = Assert.IsType<ServiceResult<string>>(badRequestResult.Value);
             Assert.False(responseServiceResult.Success);
             Assert.Equal("Cpf and Password fields must not be empty.", responseServiceResult.ErrorMessage);
+        }
+
+        [Fact]
+        public async Task Register_WithValidData_ReturnsOk()
+        {
+            var registerRequest = new RegisterRequestDto
+            {
+                Cpf = "12345678900",
+                Name = "John Doe",
+                Email = "john.doe@example.com",
+                PhoneNumber = "555-1234",
+                Password = "Password123"
+            };
+
+            _mockRegistrationService.Setup(s => s.RegisterAsync(registerRequest))
+                .ReturnsAsync(new ServiceResult<bool>(true, true));
+
+            var result = await _employeeController.Register(registerRequest);
+
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async Task Register_WithExistingCpf_ReturnsBadRequest()
+        {
+            var registerRequest = new RegisterRequestDto
+            {
+                Cpf = "12345678900",
+                Name = "John Doe",
+                Email = "john.doe@example.com",
+                PhoneNumber = "555-1234",
+                Password = "Password123"
+            };
+
+            _mockRegistrationService.Setup(s => s.RegisterAsync(registerRequest))
+                .ReturnsAsync(new ServiceResult<bool>(false, false, "CPF already exists."));
+
+            var result = await _employeeController.Register(registerRequest);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequestResult = result as BadRequestObjectResult;
+            Assert.Equal("CPF already exists.", badRequestResult.Value);
         }
     }
 }

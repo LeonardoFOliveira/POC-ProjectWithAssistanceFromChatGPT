@@ -52,7 +52,7 @@ describe('LoginComponent', () => {
 
     expect(authService.login).toHaveBeenCalledWith(loginRequest);
     expect(authService.setToken).toHaveBeenCalledWith(token);
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
+    expect(router.navigate).toHaveBeenCalledWith(['/home']);
   });
 
   it('should display an error message when login fails', () => {
